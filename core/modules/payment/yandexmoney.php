@@ -46,6 +46,8 @@ class CYandexMoney extends PaymentModule {
 	public $method_cash;
 	public $method_mobile;
 	public $method_wm;
+	public $method_ab;
+	public $method_sb;
 
 	public $pay_method;
 	
@@ -93,7 +95,15 @@ class CYandexMoney extends PaymentModule {
 			}
 
 			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_WM') && $this->org_mode) {
-				$html .= '<option value="PC">электронная валюта WebMoney</option>';
+				$html .= '<option value="WM">электронная валюта WebMoney</option>';
+			}
+
+			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_AB') && $this->org_mode) {
+				$html .= '<option value="AB">AlphaClick</option>';
+			}
+
+			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_SB') && $this->org_mode) {
+				$html .= '<option value="SB">Sberbank Online</option>';
 			}
 
 			$html .= "</select><br/> <br/>";
@@ -170,6 +180,20 @@ class CYandexMoney extends PaymentModule {
                         'settings_description'         => 'Только для юридических лиц',
                         'settings_html_function'         => 'setting_CHECK_BOX(',
                         'sort_order'                         => 6,
+                );
+				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_AB'] = array(
+                        'settings_value'                 => '',
+                        'settings_title'                         => 'AlphaClick',
+                        'settings_description'         => 'Только для юридических лиц',
+                        'settings_html_function'         => 'setting_CHECK_BOX(',
+                        'sort_order'                         => 7,
+                );
+				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_SB'] = array(
+                        'settings_value'                 => '',
+                        'settings_title'                         => 'SberbankOnline',
+                        'settings_description'         => 'Только для юридических лиц',
+                        'settings_html_function'         => 'setting_CHECK_BOX(',
+                        'sort_order'                         => 8,
                 );
 				$this->SettingsFields['CONF_PAYMENTMODULE_YM_ACCOUNT'] = array(
                         'settings_value'                 => '',
