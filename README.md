@@ -1,6 +1,6 @@
 #yandexmoney-shopcms
 
-Модуль оплаты yandexmoney-shopcmsнеобходим для интеграции с сервисом [Яндекс.Касса](http://kassa.yandex.ru/) на базе CMS shopCMS. 
+Модуль оплаты yandexmoney-shopcms необходим для интеграции с сервисом [Яндекс.Касса](http://kassa.yandex.ru/) на базе CMS shopCMS. 
 
 Доступные платежные методы, если вы работаете как юридическое лицо:
 * **Банковские карты** -  Visa (включая Electron), MasterCard и Maestro любого банка мира
@@ -10,14 +10,14 @@
 * **Интернет банкинг** - Альфа-Клик и Сбербанк Онлайн
 
 ###Установка модуля
-Для установки данного модуля необходимо;
+Для установки данного модуля необходимо:
 * переместить папку `core` из [архива](https://github.com/yandex-money/yandex-money-cms-shopcms/archive/master.zip) в корень Вашего сайта
 * инсталлировать YandexMoney (перейти в раздел `Модули` - `Модули оплаты` - `Инсталлировать`)
 * перейти к редактированию установленного модуля (`Модули` - `Модули оплаты` - `YandexMoney` - `Редактировать`) и внести нужные настройки
 * добавить новый вариант оплаты (`Настройки` - `Варианты оплаты`, модуль YandexMoney)
 * в файле `core/includes/helper.php` добавить код:
 
-```
+```php
 // Helper for YandexMoney (result)
   if ($_REQUEST["yandexmoney"] == 'yes'){
         $orderID = (int) $_REQUEST["orderNumber"];
@@ -28,9 +28,9 @@
             $paymentMethod = payGetPaymentMethodById( $order["paymethod"] );
             $currentPaymentModule = modGetModuleObj( $paymentMethod["module_id"], PAYMENT_MODULE );
             if ( $currentPaymentModule != null ) {
-    $result = $currentPaymentModule->after_payment_php( $orderID, $_REQUEST);
-   }
-  }
+              $result = $currentPaymentModule->after_payment_php( $orderID, $_REQUEST);
+            }
+        }
   }
 ```
 
