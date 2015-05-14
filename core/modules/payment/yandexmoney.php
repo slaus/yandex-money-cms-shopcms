@@ -8,7 +8,8 @@
 //                http://money.yandex.ru
 
 class CYandexMoney extends PaymentModule {
-		
+	const YAVERSION = '1.0.0';
+	
 	public $test_mode;
 	public $org_mode;
 	public $status;
@@ -55,7 +56,7 @@ class CYandexMoney extends PaymentModule {
 			 
              $this->title                 = "YandexMoney";
              $this->description         = "YandexMoney (money.yandex.ru). Модуль работает в режиме автоматической оплаты. Этот модуль можно использовать для автоматической продажи цифровых товаров.<br/>
-			 <b>Настройки</b>: <br>Адрес приема HTTP уведомлений (paymentAvisoURL / checkURL): <br/> http(s)://адрес_магазина/index.php?yandexmoney=yes";
+			 <b>Настройки</b>: <br>Адрес приема HTTP уведомлений (paymentAvisoURL / checkURL): <br/> http(s)://адрес_магазина/index.php?yandexmoney=yes<br/><br/>Модуль версии ".self::YAVERSION;
 			
              $this->sort_order         = 0;
 
