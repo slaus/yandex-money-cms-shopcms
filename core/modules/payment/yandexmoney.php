@@ -8,7 +8,7 @@
 //                http://money.yandex.ru
 
 class CYandexMoney extends PaymentModule {
-	const YAVERSION = '1.1.0';
+	const YAVERSION = '1.2.0';
 	
 	public $test_mode;
 	public $org_mode;
@@ -49,18 +49,36 @@ class CYandexMoney extends PaymentModule {
 	public $method_wm;
 	public $method_ab;
 	public $method_sb;
+	public $method_pb;	
+	public $method_ma;
+	public $method_qw;
+	public $method_qp;
 
 	public $pay_method;
-	
+	private $array_payments = array(
+				'ym'=>array('PC','Оплата из кошелька в Яндекс.Деньгах'),
+				'cards'=>array('AC','Оплата с произвольной банковской карты'),
+				'cash'=>array('GP','Оплата наличными через кассы и терминалы'),
+				'phone'=>array('MC','Платеж со счета мобильного телефона'),
+				'wm'=>array('WM','Оплата из кошелька в системе WebMoney'),
+				'ab'=>array('AB','Оплата через Альфа-Клик'),
+				'sb'=>array('SB','Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн'),
+				'ma'=>array('MA','Оплата через MasterPass'),
+				'pb'=>array('PB','Оплата через интернет-банк Промсвязьбанка'),
+				'qw'=>array('QW','Оплата через QIWI Wallet'),
+				'qp'=>array('QP','Оплата через доверительный платеж (Куппи.ру)'));
+				
     function _initVars(){
 			 
              $this->title                 = "YandexMoney";
-             $this->description         = "YandexMoney (money.yandex.ru). Модуль работает в режиме автоматической оплаты. Этот модуль можно использовать для автоматической продажи цифровых товаров.<br/>
-			 <b>Настройки</b>: <br>Адрес приема HTTP уведомлений (paymentAvisoURL / checkURL): <br/> http(s)://адрес_магазина/index.php?yandexmoney=yes<br/><br/>Модуль версии ".self::YAVERSION;
-			
+             $this->description         = "YandexMoney (money.yandex.ru).
+				 <br/> Модуль работает в режиме автоматической оплаты. Этот модуль можно использовать для автоматической продажи цифровых товаров.
+				 <br/>
+				 Любое использование Вами программы означает полное и безоговорочное принятие Вами условий лицензионного договора, размещенного по адресу <a href=\"https://money.yandex.ru/doc.xml?id=527132\">https://money.yandex.ru/doc.xml?id=527132</a> (далее – «Лицензионный договор»). Если Вы не принимаете условия Лицензионного договора в полном объёме, Вы не имеете права использовать программу в каких-либо целях.
+				 <br/>Модуль версии ".self::YAVERSION;
              $this->sort_order         = 0;
 
-			 $array_params = array('testmode', 'mode', 'method_ym', 'method_cards', 'method_cash', 'method_phone', 'method_wm', 'method_ab', 'method_sb', 'method_ma', 'method_pb', 'password', 'shopid', 'scid', 'account', 'status');
+			 $array_params = array('urls','testmode', 'mode', 'method_ym', 'method_cards', 'method_cash', 'method_phone', 'method_wm', 'method_ab', 'method_sb', 'method_ma', 'method_pb','method_qw','method_qp', 'password', 'shopid', 'scid', 'account', 'status');
              foreach ($array_params as $key => $value) {
 				$value2 = 'CONF_PAYMENTMODULE_YM_' . strtoupper($value);
 				$this->Settings[] = $value2;
@@ -78,44 +96,8 @@ class CYandexMoney extends PaymentModule {
 		function getMethodsHtml(){
 				
 			$html = "<br/><b>Способ оплаты:</b><br/><select name=\"ym_method\">";
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_YM')) {
-				$html .= '<option value="PC">Оплата из кошелька в Яндекс.Деньгах</option>';
-			}
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_CARDS')) {
-				$html .= '<option value="AC">Оплата с произвольной банковской карты</option>';
-			}	
-			
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_CASH') && $this->org_mode) {
-				$html .= '<option value="GP">Оплата наличными через кассы и терминалы</option>';
-			}	
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_PHONE') && $this->org_mode) {
-				$html .= '<option value="MC">Платеж со счета мобильного телефона</option>';
-			}
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_WM') && $this->org_mode) {
-				$html .= '<option value="WM">Оплата из кошелька в системе WebMoney</option>';
-			}
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_AB') && $this->org_mode) {
-				$html .= '<option value="AB">Оплата через Альфа-Клик</option>';
-			}
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_SB') && $this->org_mode) {
-				$html .= '<option value="SB">Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн</option>';
-			}
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_MA') && $this->org_mode) {
-				$html .= '<option value="MA">Оплата через MasterPass</option>';
-			}
-
-			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_PB') && $this->org_mode) {
-				$html .= '<option value="PB">Оплата через интернет-банк Промсвязьбанка</option>';
-			}
+         foreach ($this->array_payments as $key => $value)	if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_'. strtoupper($key))) $html .= '<option value="'.$value[0].'">'.$value[1].'</option>';
 			$html .= "</select><br/> <br/>";
-
 			return $html;
 		}
 
@@ -139,6 +121,13 @@ class CYandexMoney extends PaymentModule {
 
 
         function _initSettingFields(){
+		  $this->SettingsFields['CONF_PAYMENTMODULE_YM_URLS'] = array(
+				'settings_value'                 => '1',
+				'settings_title'                         => 'Адрес приема уведомлений (AvisoURL/checkURL)',
+                'settings_description'         => 'https://ваш_домен/index.php?yandexmoney=yes',
+                'settings_html_function'         => '',
+                'sort_order'                         => 1,
+              );
 			$this->SettingsFields['CONF_PAYMENTMODULE_YM_TESTMODE'] = array(
 				'settings_value'                 => '1',
 				'settings_title'                         => 'Тестовый режим',
@@ -153,70 +142,16 @@ class CYandexMoney extends PaymentModule {
                         'settings_html_function'         => 'setting_SELECT_BOX(CYandexMoney::getModes(),',
                         'sort_order'                         => 2,
                 );
-			  $this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_YM'] = array(
+					 
+				foreach ($this->array_payments as $key => $value){
+					$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_'. strtoupper($key)] = array(
                         'settings_value'                 => '',
-                        'settings_title'                         => 'Кошелек Яндекс.Деньги',
+                        'settings_title'                         => $value[1],
                         'settings_description'         => '',
                         'settings_html_function'         => 'setting_CHECK_BOX(',
                         'sort_order'                         => 3,
-                );
-			  $this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_CARDS'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Банковская карта',
-                        'settings_description'         => '',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 3,
-                );
-
-			    $this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_CASH'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Наличными через кассы и терминалы',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 4,
-                );
-				 $this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_PHONE'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Счет мобильного телефона',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 5,
-                );
-				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_WM'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Кошелек WebMoney',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 6,
-                );
-				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_AB'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Альфа-Клик',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 7,
-                );
-				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_SB'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Сбербанк: оплата по SMS или Сбербанк Онлайн',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 8,
-                );
-				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_MA'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'MasterPass',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 8,
-                );				
-				$this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_PB'] = array(
-                        'settings_value'                 => '',
-                        'settings_title'                         => 'Интернет-банк Промсвязьбанка',
-                        'settings_description'         => 'Только для юридических лиц',
-                        'settings_html_function'         => 'setting_CHECK_BOX(',
-                        'sort_order'                         => 8,
-                );
+					);
+				}
 				$this->SettingsFields['CONF_PAYMENTMODULE_YM_ACCOUNT'] = array(
                         'settings_value'                 => '',
                         'settings_title'                         => 'Номер кошелька Яндекс',
@@ -329,8 +264,8 @@ class CYandexMoney extends PaymentModule {
 						   <input type="hidden" name="need-email" value="'.$this->need_email.'" >
 						   <input type="hidden" name="need-phone" value="'.$this->need_phone.'">
 						   <input type="hidden" name="need-address" value="'.$this->need_address.'">
-						  
-						</form>';
+							<input type="hidden" name="SuccessURL" value="' . getTransactionResultURL('success') . '&InvId=' . $this->orderId  . '" >
+							</form>';
 			}
 			$html .= '<script type="text/javascript">
 						document.getElementById("paymentform").submit();
