@@ -8,7 +8,7 @@
 //                http://money.yandex.ru
 
 class CYandexMoney extends PaymentModule {
-	const YAVERSION = '1.2.0';
+	const YAVERSION = '1.2.1';
 	
 	public $test_mode;
 	public $org_mode;
@@ -277,41 +277,14 @@ class CYandexMoney extends PaymentModule {
 		public function checkSign($callbackParams){
 			$string = $callbackParams['action'].';'.$callbackParams['orderSumAmount'].';'.$callbackParams['orderSumCurrencyPaycash'].';'.$callbackParams['orderSumBankPaycash'].';'.$callbackParams['shopId'].';'.$callbackParams['invoiceId'].';'.$callbackParams['customerNumber'].';'.$this->password;
 			$md5 = strtoupper(md5($string));
-			return ($callbackParams['md5']==$md5);
-		}
-
-		public function sendAviso($callbackParams, $code){
-			header("Content-type: text/xml; charset=utf-8");
-			$xml = '<?xml version="1.0" encoding="UTF-8"?>
-				<paymentAvisoResponse performedDatetime="'.date("c").'" code="'.$code.'" invoiceId="'.$callbackParams['invoiceId'].'" shopId="'.$this->shopid.'"/>';
-			echo $xml;
+			return (strtoupper($callbackParams['md5'])==$md5);
 		}
 
 		public function sendCode($callbackParams, $code){
 			header("Content-type: text/xml; charset=utf-8");
 			$xml = '<?xml version="1.0" encoding="UTF-8"?>
-				<checkOrderResponse performedDatetime="'.date("c").'" code="'.$code.'" invoiceId="'.$callbackParams['invoiceId'].'" shopId="'.$this->shopid.'"/>';
+				<'.$callbackParams['action'].'Response performedDatetime="'.date("c").'" code="'.$code.'" invoiceId="'.$callbackParams['invoiceId'].'" shopId="'.$this->shopid.'"/>';
 			echo $xml;
-		}
-
-		public function checkOrder($callbackParams, $sendCode=FALSE, $aviso=FALSE){ 
-		
-			if ($this->checkSign($callbackParams)){
-				$code = 0;
-			}else{
-				$code = 1;
-			}
-			
-			if ($sendCode){
-				if ($aviso){
-					$this->sendAviso($callbackParams, $code);
-				}else{
-					$this->sendCode($callbackParams, $code);
-				}
-				exit;
-			}else{
-				return $code;
-			}
 		}
 
 		public function individualCheck($callbackParams){
@@ -329,27 +302,24 @@ class CYandexMoney extends PaymentModule {
 		public function ProcessResult()
 		{
 			$callbackParams = $_POST;
-			$order_id = false;
 			if ($this->org_mode){
-				if ($callbackParams['action'] == 'checkOrder'){
-					$code = $this->checkOrder($callbackParams);
-					$this->sendCode($callbackParams, $code);
-					$order_id = (int)$callbackParams["orderNumber"];
-				}
-				if ($callbackParams['action'] == 'paymentAviso'){
-					$this->checkOrder($callbackParams, TRUE, TRUE);
-				}
+			    if ($this->checkSign($callbackParams)){
+                    $order = ordGetOrder($callbackParams["orderNumber"]);
+                    if(number_format($callbackParams['orderSumAmount'], 2) == number_format(floatval($order["order_amount"] * $order["currency_value"]), 2)){
+                        $this->sendCode($callbackParams, 0);
+                        return (int)$callbackParams["orderNumber"];
+                    }else{
+                        $this->sendCode($callbackParams, 100);
+                    }
+                }else{
+                    $this->sendCode($callbackParams, 1);
+                }
 			}else{
-				$check = $this->individualCheck($callbackParams);
-				
-				if (!$check){
-					
-				}else{
-					$order_id = (int)$callbackParams["label"];
+				if ($this->individualCheck($callbackParams)){
+					return (int)$callbackParams["label"];
 				}
 			}
-			
-			return $order_id;
+            return false;
 		}
 		
 		public function getFormUrl(){
@@ -376,8 +346,6 @@ class CYandexMoney extends PaymentModule {
 			}
 		}
 
-
-
         function after_payment_php( $orderID, $params){
 				$this->_initVars();
 				 $order = ordGetOrder( $orderID );
@@ -386,9 +354,6 @@ class CYandexMoney extends PaymentModule {
 					ostSetOrderStatusToOrder($order_id, $this->_getSettingValue('CONF_PAYMENTMODULE_YM_STATUS'));
 				}
 				exit;
-
         }
-
-	
 }
 ?>
