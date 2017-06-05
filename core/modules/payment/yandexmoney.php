@@ -7,8 +7,32 @@
 // see also
 //                http://money.yandex.ru
 
+class Tools {
+    public static function d($object, $kill = true)
+    {
+        return (Tools::dieObject($object, $kill));
+    }
+
+    public static function p($object)
+    {
+        return (Tools::dieObject($object, false));
+    }
+
+    public static function dieObject($object, $kill = true)
+    {
+        echo '<xmp style="text-align: left;">';
+        print_r($object);
+        echo '</xmp><br />';
+
+        if ($kill)
+            die('END');
+
+        return $object;
+    }
+}
+
 class CYandexMoney extends PaymentModule {
-	const YAVERSION = '1.2.1';
+	const YAVERSION = '1.3.0';
 	
 	public $test_mode;
 	public $org_mode;
@@ -78,13 +102,15 @@ class CYandexMoney extends PaymentModule {
 				 <br/>Модуль версии ".self::YAVERSION;
              $this->sort_order         = 0;
 
-			 $array_params = array('urls','testmode', 'mode', 'method_ym', 'method_cards', 'method_cash', 'method_phone', 'method_wm', 'method_ab', 'method_sb', 'method_ma', 'method_pb','method_qw','method_qp', 'password', 'shopid', 'scid', 'account', 'status');
+			 $array_params = array('urls','testmode', 'mode', 'method_ym', 'method_cards', 'method_cash',
+                 'method_phone', 'method_wm', 'method_ab', 'method_sb', 'method_ma', 'method_pb',
+                 'method_qw','method_qp', 'password', 'shopid', 'scid', 'account', 'status','check','taxes');
              foreach ($array_params as $key => $value) {
 				$value2 = 'CONF_PAYMENTMODULE_YM_' . strtoupper($value);
 				$this->Settings[] = $value2;
 				$this->$value = $this->_getSettingValue($value2);
 			 }
-			
+
 			 $this->org_mode = ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_MODE') == 2);
 			 $this->test_mode = ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_TESTMODE') == 1);
 
@@ -128,6 +154,7 @@ class CYandexMoney extends PaymentModule {
                 'settings_html_function'         => '',
                 'sort_order'                         => 1,
               );
+
 			$this->SettingsFields['CONF_PAYMENTMODULE_YM_TESTMODE'] = array(
 				'settings_value'                 => '1',
 				'settings_title'                         => 'Тестовый режим',
@@ -182,7 +209,7 @@ class CYandexMoney extends PaymentModule {
                         'settings_html_function'         => 'setting_TEXT_BOX(0,',
                         'sort_order'                         => 7,
                 );
-				
+
                 $this->SettingsFields['CONF_PAYMENTMODULE_YM_STATUS'] = array(
                         'settings_value'                 => '',
                         'settings_title'                         => 'Статус заказа после оплаты',
@@ -190,6 +217,21 @@ class CYandexMoney extends PaymentModule {
                         'settings_html_function'         => 'setting_ORDER_STATUS_SELECT(',
                         'sort_order'                         => 1,
                 );
+
+            $this->SettingsFields['CONF_PAYMENTMODULE_YM_CHECK'] = array(
+                'settings_value'                 => '1',
+                'settings_title'                         => 'Отправлять в Яндекс.Кассу данные для чеков (54-ФЗ)',
+                'settings_description'         => 'Отправлять в Яндекс.Кассу данные для чеков (54-ФЗ)',
+                'settings_html_function'         => 'setting_CHECK_BOX(',
+                'sort_order'                         => 8,
+            );
+            $this->SettingsFields['CONF_PAYMENTMODULE_YM_TAXES'] = array(
+                'settings_value'                 => '1',
+                'settings_title'                         => 'Передавать налоги в Яндекс.Кассу как',
+                'settings_description'         => 'Ставка по умолчанию будет в чеке, если в карточке товара не указана другая ставка.',
+                'settings_html_function'         => 'setting_SELECT_BOX(CYandexMoney::get_def_taxes(),',
+                'sort_order'                         => 9,
+            );
         }
 
 		 function getModes(){
@@ -205,6 +247,17 @@ class CYandexMoney extends PaymentModule {
                                 ),
                         );
         }
+
+    function get_def_taxes() {
+        return array(
+            array('value' => '1', 'title' => 'Без НДС'),
+            array('value' => '2', 'title' => '0%'),
+            array('value' => '3', 'title' => '10%'),
+            array('value' => '4', 'title' => '18%'),
+            array('value' => '5', 'title' => 'Рассчётная ставка 11/110'),
+            array('value' => '6', 'title' => 'Рассчётная ставка 18/118'),
+        );
+    }
 
         function after_processing_html( $orderID )
         {	
@@ -233,10 +286,46 @@ class CYandexMoney extends PaymentModule {
         }
 
 		public function createFormHtml(){
-			
+			if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_CHECK')) {
+                $orderDb = ordGetOrder($this->orderId);
+			    $receipt = array(
+                   'customerContact' => $orderDb['customer_email'],
+                    'items' => array(),
+                );
+
+			    $one = 0;
+			    if ($orderDb['order_discount'] > 0) {
+                    $one = $orderDb['order_discount'];
+                }
+
+                foreach (ordGetOrderContent($this->orderId) as $product) {
+                    $receipt['items'][] = array(
+                        'quantity' => $product['Quantity'],
+                        'text' => mb_substr($product['name'], 0, 128),
+                        'tax' => $this->_getSettingValue('CONF_PAYMENTMODULE_YM_TAXES'),
+                        'price' => array(
+                            'amount' => number_format($product['Price'] - ($product['Price'] * $one / 100), 2, '.', ''),
+                            'currency' => 'RUB'
+                        ),
+                    );
+                }
+
+                if ($orderDb['shipping_type'] && $orderDb['shipping_cost'] > 0) {
+                    $receipt['items'][] = array(
+                        'quantity' => 1,
+                        'text' => mb_substr($orderDb['shipping_type'], 0, 128),
+                        'tax' => $this->_getSettingValue('CONF_PAYMENTMODULE_YM_TAXES'),
+                        'price' => array(
+                            'amount' => number_format($orderDb['shipping_cost'], 2, '.', ''),
+                            'currency' => 'RUB'
+                        ),
+                    );
+                }
+            }
+
 			if ($this->org_mode){
 				$html = '
-					<form method="POST" action="'.$this->getFormUrl().'"  id="paymentform" name = "paymentform">
+					<form method="POST" action="'.$this->getFormUrl().'"  id="paymentform" name = "paymentform" accept-charset="utf-8">
 					   <input type="hidden" name="paymentType" value="'.$this->pay_method.'" />
 					   <input type="hidden" name="shopid" value="'.$this->shopid.'">
 					   <input type="hidden" name="scid" value="'.$this->scid.'">
@@ -246,9 +335,16 @@ class CYandexMoney extends PaymentModule {
 					   <input type="hidden" name="sum" value="'.$this->orderTotal.'" data-type="number" >
 					   <input type="hidden" name="customerNumber" value="'.$this->userId.'" >	
 					   <input type="hidden" name="cms_name" value="shopcms" >	
-					</form>';
+					';
+
+				    if ($this->_getSettingValue("CONF_PAYMENTMODULE_YM_CHECK")) {
+				        $html .= '<input type="hidden" name="ym_merchant_receipt" value=\''.JsHttpRequest::php2js($receipt).'\' >';
+                    }
+
+                    $html .= '</form>';
+//                    Tools::d($html);
 			}else{
-				$html = '<form method="POST" action="'.$this->getFormUrl().'"  id="paymentform" name = "paymentform">
+				$html = '<form method="POST" action="'.$this->getFormUrl().'"  id="paymentform" name = "paymentform" accept-charset="utf-8">
 						   <input type="hidden" name="receiver" value="'.$this->account.'">
 						   <input type="hidden" name="formcomment" value="Order '.$this->orderId.'">
 						   <input type="hidden" name="short-dest" value="Order '.$this->orderId.'">
