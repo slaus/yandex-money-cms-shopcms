@@ -10,7 +10,7 @@
 
 class CYandexMoney extends PaymentModule
 {
-    const YAVERSION = '1.2.1';
+    const YAVERSION = '1.2.3';
 
     const MODE_NONE = 0;
     const MODE_KASSA = 1;
@@ -62,7 +62,7 @@ class CYandexMoney extends PaymentModule
     public $method_pb;
     public $method_ma;
     public $method_qw;
-    public $method_qp;
+    public $method_cr;
 
     public $check;
 
@@ -75,55 +75,82 @@ class CYandexMoney extends PaymentModule
     public $billing_id;
     public $billing_purpose;
     public $billing_status;
+    public $payment_method;
+    public $payment_subject;
+    public $delivery_payment_method;
+    public $delivery_payment_subject;
 
     private $array_payments = array(
-        'ym'    => array('PC', 'Оплата из кошелька в Яндекс.Деньгах'),
-        'cards' => array('AC', 'Оплата с произвольной банковской карты'),
-        'cash'  => array('GP', 'Оплата наличными через кассы и терминалы'),
-        'phone' => array('MC', 'Платеж со счета мобильного телефона'),
-        'wm'    => array('WM', 'Оплата из кошелька в системе WebMoney'),
-        'ab'    => array('AB', 'Оплата через Альфа-Клик'),
-        'sb'    => array('SB', 'Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн'),
-        'ma'    => array('MA', 'Оплата через MasterPass'),
-        'pb'    => array('PB', 'Оплата через интернет-банк Промсвязьбанка'),
-        'qw'    => array('QW', 'Оплата через QIWI Wallet'),
-        'qp'    => array('QP', 'Оплата через доверительный платеж (Куппи.ру)')
+        'ym'    => array('PC', 'Яндекс.Деньги'),
+        'cards' => array('AC', 'Банковские карты'),
+        'cash'  => array('GP', 'Наличные через терминалы'),
+        'phone' => array('MC', 'Счёта мобильного телефона'),
+        'wm'    => array('WM', 'WebMoney'),
+        'ab'    => array('AB', 'Альфа-Клик'),
+        'sb'    => array('SB', 'Сбербанк Онлайн'),
+        'ma'    => array('MA', 'MasterPass'),
+        'pb'    => array('PB', 'Промсвязьбанк'),
+        'qw'    => array('QW', 'QIWI Wallet'),
+        'cr'    => array('CR', 'Заплатить по частям'),
     );
 
     public function _initVars()
     {
-         $this->title = "YandexMoney";
-         $this->description = "YandexMoney (money.yandex.ru).
+        $this->title       = "YandexMoney";
+        $this->description = "YandexMoney (money.yandex.ru).
              <br/> Модуль работает в режиме автоматической оплаты. Этот модуль можно использовать для автоматической продажи цифровых товаров.
              <br/>
              Любое использование Вами программы означает полное и безоговорочное принятие Вами условий лицензионного договора, размещенного по адресу <a href=\"https://money.yandex.ru/doc.xml?id=527132\">https://money.yandex.ru/doc.xml?id=527132</a> (далее – «Лицензионный договор»). Если Вы не принимаете условия Лицензионного договора в полном объёме, Вы не имеете права использовать программу в каких-либо целях.
              <br/>Модуль версии ".self::YAVERSION;
-         $this->sort_order = 0;
+        $this->sort_order  = 0;
 
-         $array_params = array(
-             'desc',
+        $array_params = array(
+            'desc',
 
-             // kassa options
-             'kassa_enable',
-             'urls', 'testmode',  'shopid', 'scid', 'password', 'status',
-             'payment_type_desc',
-             'method_ym', 'method_cards', 'method_cash', 'method_phone', 'method_wm', 'method_ab', 'method_sb',
-             'method_ma', 'method_pb', 'method_qw','method_qp',
-             'check', 'taxes',
-             'spacer_one',
+            // kassa options
+            'kassa_enable',
+            'urls',
+            'testmode',
+            'shopid',
+            'scid',
+            'password',
+            'status',
+            'payment_type_desc',
+            'method_ym',
+            'method_cards',
+            'method_cash',
+            'method_phone',
+            'method_wm',
+            'method_ab',
+            'method_sb',
+            'method_ma',
+            'method_pb',
+            'method_qw',
+            'method_cr',
+            'check',
+            'taxes',
+            'spacer_one',
+            'payment_method',
+            'payment_subject',
+            'delivery_payment_method',
+            'delivery_payment_subject',
 
-             // money options
-             'money_enable',
-             'account', 'money_password', 'money_status',
-             'spacer_two',
+            // money options
+            'money_enable',
+            'account',
+            'money_password',
+            'money_status',
+            'spacer_two',
 
-             // billing options
-             'billing_enable',
-             'billing_id', 'billing_purpose', 'billing_status',
-         );
+            // billing options
+            'billing_enable',
+            'billing_id',
+            'billing_purpose',
+            'billing_status',
+        );
 
         foreach ($array_params as $key => $value) {
-            $value2 = 'CONF_PAYMENTMODULE_YM_' . strtoupper($value);
+            $value2           = 'CONF_PAYMENTMODULE_YM_'.strtoupper($value);
             $this->Settings[] = $value2;
         }
 
@@ -140,31 +167,54 @@ class CYandexMoney extends PaymentModule
         $array_params = array(
             // kassa options
             'kassa_enable',
-            'urls', 'testmode',  'shopid', 'scid', 'password', 'status',
-            'method_ym', 'method_cards', 'method_cash', 'method_phone', 'method_wm', 'method_ab', 'method_sb',
-            'method_ma', 'method_pb', 'method_qw','method_qp',
-            'check', 'taxes',
+            'urls',
+            'testmode',
+            'shopid',
+            'scid',
+            'password',
+            'status',
+            'method_ym',
+            'method_cards',
+            'method_cash',
+            'method_phone',
+            'method_wm',
+            'method_ab',
+            'method_sb',
+            'method_ma',
+            'method_pb',
+            'method_qw',
+            'method_cr',
+            'check',
+            'taxes',
+            'payment_method',
+            'payment_subject',
+            'delivery_payment_method',
+            'delivery_payment_subject',
 
             // money options
             'money_enable',
-            'account', 'money_password', 'money_status',
+            'account',
+            'money_password',
+            'money_status',
 
             // billing options
             'billing_enable',
-            'billing_id', 'billing_purpose', 'billing_status',
+            'billing_id',
+            'billing_purpose',
+            'billing_status',
         );
 
         foreach ($array_params as $key => $value) {
-            $value2 = 'CONF_PAYMENTMODULE_YM_' . strtoupper($value);
+            $value2       = 'CONF_PAYMENTMODULE_YM_'.strtoupper($value);
             $this->$value = $this->_getSettingValue($value2);
         }
 
         if ($this->kassa_enable == 1) {
-            $this->mode = self::MODE_KASSA;
-            $this->money_enable = false;
+            $this->mode           = self::MODE_KASSA;
+            $this->money_enable   = false;
             $this->billing_enable = false;
         } elseif ($this->money_enable == 1) {
-            $this->mode = self::MODE_MONEY;
+            $this->mode           = self::MODE_MONEY;
             $this->billing_enable = false;
         } elseif ($this->billing_enable == 1) {
             $this->mode = self::MODE_BILLING;
@@ -180,18 +230,19 @@ class CYandexMoney extends PaymentModule
         $html = "<br/><b>Способ оплаты:</b><br/><select name=\"ym_method\">";
         if ($this->mode === self::MODE_KASSA) {
             foreach ($this->array_payments as $key => $value) {
-                if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_' . strtoupper($key))) {
-                    $html .= '<option value="' . $value[0] . '">' . $value[1] . '</option>';
+                if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_'.strtoupper($key))) {
+                    $html .= '<option value="'.$value[0].'">'.$value[1].'</option>';
                 }
             }
         } elseif ($this->mode === self::MODE_MONEY) {
             foreach (array('ym', 'cards') as $key => $value) {
-                if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_' . strtoupper($key))) {
-                    $html .= '<option value="' . $value[0] . '">' . $value[1] . '</option>';
+                if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_'.strtoupper($key))) {
+                    $html .= '<option value="'.$value[0].'">'.$value[1].'</option>';
                 }
             }
         }
         $html .= "</select><br/> <br/>";
+
         return $html;
     }
 
@@ -214,10 +265,11 @@ class CYandexMoney extends PaymentModule
         }
 
         $html = '<br /><label for="ym-billing-fio">ФИО плательщика</label><br />'
-            . '<input type="text" name="ym_billing_fio" id="ym-billing-fio" value="' . htmlspecialchars(implode(' ', $fio)) . '" />'
-            . '<div id="ym-billing-fio-error" style="display: none;">Укажите фамилию имя и отчество плательщика</div>'
-            . '<br /><br />'
-            . '<script>
+                .'<input type="text" name="ym_billing_fio" id="ym-billing-fio" value="'.htmlspecialchars(implode(' ',
+                $fio)).'" />'
+                .'<div id="ym-billing-fio-error" style="display: none;">Укажите фамилию имя и отчество плательщика</div>'
+                .'<br /><br />'
+                .'<script>
         document.addEventListener("DOMContentLoaded", function() {
             var form = document.getElementById("MainForm");
             for (var i = 0; i < form.length; i++) {
@@ -240,6 +292,7 @@ class CYandexMoney extends PaymentModule
             }
         }, false);
             </script>';
+
         return $html;
     }
 
@@ -264,6 +317,7 @@ class CYandexMoney extends PaymentModule
                 }
             }
         }
+
         return $text;
     }
 
@@ -342,7 +396,7 @@ class CYandexMoney extends PaymentModule
         );
 
         foreach ($this->array_payments as $key => $value) {
-            $this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_'. strtoupper($key)] = array(
+            $this->SettingsFields['CONF_PAYMENTMODULE_YM_METHOD_'.strtoupper($key)] = array(
                 'settings_value'         => '',
                 'settings_title'         => $value[1],
                 'settings_description'   => '',
@@ -367,12 +421,44 @@ class CYandexMoney extends PaymentModule
             'sort_order'             => 12,
         );
 
+        $this->SettingsFields['CONF_PAYMENTMODULE_YM_PAYMENT_METHOD'] = array(
+            'settings_value'         => '',
+            'settings_title'         => 'Признак способа расчета',
+            'settings_description'   => '',
+            'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentModeEnum(),',
+            'sort_order'             => 13,
+        );
+
+        $this->SettingsFields['CONF_PAYMENTMODULE_YM_PAYMENT_SUBJECT'] = array(
+            'settings_value'         => '',
+            'settings_title'         => 'Признак предмета расчета',
+            'settings_description'   => '',
+            'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentSubjectEnum(),',
+            'sort_order'             => 14,
+        );
+
+        $this->SettingsFields['CONF_PAYMENTMODULE_YM_DELIVERY_PAYMENT_METHOD'] = array(
+            'settings_value'         => '1',
+            'settings_title'         => 'Признак способа рачета для доставки',
+            'settings_description'   => '',
+            'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentModeEnum(),',
+            'sort_order'             => 15,
+        );
+
+        $this->SettingsFields['CONF_PAYMENTMODULE_YM_DELIVERY_PAYMENT_SUBJECT'] = array(
+            'settings_value'         => '',
+            'settings_title'         => 'Признак предмета расчета для доставки',
+            'settings_description'   => '',
+            'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentSubjectEnum(),',
+            'sort_order'             => 16,
+        );
+
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_SPACER_ONE'] = array(
             'settings_value'         => '1',
             'settings_title'         => '',
             'settings_description'   => '',
             'settings_html_function' => '',
-            'sort_order'             => 13,
+            'sort_order'             => 17,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_MONEY_ENABLE'] = array(
@@ -462,7 +548,7 @@ class CYandexMoney extends PaymentModule
             array(
                 'title' => 'Яндекс.Платежка',
                 'value' => '3',
-            )
+            ),
         );
     }
 
@@ -478,18 +564,53 @@ class CYandexMoney extends PaymentModule
         );
     }
 
+    public function getPaymentModeEnum()
+    {
+        return array(
+            array('value' => 'full_prepayment', 'title' => 'Полная предоплата (full_prepayment)'),
+            array('value' => 'partial_prepayment', 'title' => 'Частичная предоплата (partial_prepayment)'),
+            array('value' => 'advance', 'title' => 'Аванс (advance)'),
+            array('value' => 'full_payment', 'title' => 'Полный расчет (full_payment)'),
+            array('value' => 'partial_payment', 'title' => 'Частичный расчет и кредит (partial_payment)'),
+            array('value' => 'credit', 'title' => 'Кредит (credit)'),
+            array('value' => 'credit_payment', 'title' => 'Выплата по кредиту (credit_payment)'),
+        );
+    }
+
+    public function getPaymentSubjectEnum()
+    {
+        return array(
+            array('value' => 'commodity', 'title' => 'Товар (commodity)'),
+            array('value' => 'excise', 'title' => 'Подакцизный товар (excise)'),
+            array('value' => 'job', 'title' => 'Работа (job)'),
+            array('value' => 'service', 'title' => 'Услуга (service)'),
+            array('value' => 'gambling_bet', 'title' => 'Ставка в азартной игре (gambling_bet)'),
+            array('value' => 'gambling_prize', 'title' => 'Выигрыш в азартной игре (gambling_prize)'),
+            array('value' => 'lottery', 'title' => 'Лотерейный билет (lottery)'),
+            array('value' => 'lottery_prize', 'title' => 'Выигрыш в лотерею (lottery_prize)'),
+            array(
+                'value' => 'intellectual_activity',
+                'title' => 'Результаты интеллектуальной деятельности (intellectual_activity)',
+            ),
+            array('value' => 'payment', 'title' => 'Платеж (payment)'),
+            array('value' => 'agent_commission', 'title' => 'Агентское вознаграждение (agent_commission)'),
+            array('value' => 'composite', 'title' => 'Несколько вариантов (composite)'),
+            array('value' => 'another', 'title' => 'Другое (another)'),
+        );
+    }
+
     public function after_processing_html($orderID)
     {
         $order = ordGetOrder($orderID);
 
-        $this->orderId = $orderID;
-        $this->comment = $order['customers_comment'];
+        $this->orderId    = $orderID;
+        $this->comment    = $order['customers_comment'];
         $this->orderTotal = floatval($order["order_amount"] * $order["currency_value"]);
 
         $this->_realInitVars();
 
         $this->pay_method = $_SESSION['ym_method'];
-        $this->userId = $order['customerID'];
+        $this->userId     = $order['customerID'];
 
         $this->createFormHtml($order);
 
@@ -498,7 +619,8 @@ class CYandexMoney extends PaymentModule
 
     public function before_payment_php($orderID, $OutSum, $merch)
     {
-        $res  = '_before_payment_php_';
+        $res = '_before_payment_php_';
+
         return $res;
     }
 
@@ -510,11 +632,18 @@ class CYandexMoney extends PaymentModule
         if ($this->mode === self::MODE_KASSA && $this->check == 1) {
             $receipt = new YandexMoneyReceipt($this->_getSettingValue('CONF_PAYMENTMODULE_YM_TAXES'));
             $receipt->setCustomerContact($orderDb['customer_email']);
+            $paymentMethod          = $this->_getSettingValue('CONF_PAYMENTMODULE_YM_PAYMENT_METHOD');
+            $paymentSubject         = $this->_getSettingValue('CONF_PAYMENTMODULE_YM_PAYMENT_SUBJECT');
+            $paymentDeliveryMethod  = $this->_getSettingValue('CONF_PAYMENTMODULE_YM_DELIVERY_PAYMENT_METHOD');
+            $paymentDeliverySubject = $this->_getSettingValue('CONF_PAYMENTMODULE_YM_DELIVERY_PAYMENT_SUBJECT');
+
             foreach (ordGetOrderContent($this->orderId) as $product) {
-                $receipt->addItem($product['name'], $product['Price'], $product['Quantity']);
+                $receipt->addItem(mb_convert_encoding($product['name'], 'utf-8', 'cp-1251'), $product['Price'],
+                    $product['Quantity'], null, $paymentMethod, $paymentSubject);
             }
             if ($orderDb['shipping_type'] && $orderDb['shipping_cost'] > 0) {
-                $receipt->addShipping($orderDb['shipping_type'], $orderDb['shipping_cost']);
+                $receipt->addShipping(mb_convert_encoding($orderDb['shipping_type'], 'utf-8', 'cp-1251'),
+                    $orderDb['shipping_cost'], null, $paymentDeliveryMethod, $paymentDeliverySubject);
             }
             $receipt->normalize($this->orderTotal);
         }
@@ -525,17 +654,17 @@ class CYandexMoney extends PaymentModule
                     <input type="hidden" name="paymentType" value="'.$this->pay_method.'" />
                     <input type="hidden" name="shopid" value="'.$this->shopid.'">
                     <input type="hidden" name="scid" value="'.$this->scid.'">
-                    <input type="hidden" name="shopSuccessURL" value="' . getTransactionResultURL('success') . '&InvId=' . $this->orderId  . '" >
-                    <input type="hidden" name="shopFailURL" value="' . getTransactionResultURL('failure') . '&InvId=' . $this->orderId  . '" >
+                    <input type="hidden" name="shopSuccessURL" value="'.getTransactionResultURL('success').'&InvId='.$this->orderId.'" >
+                    <input type="hidden" name="shopFailURL" value="'.getTransactionResultURL('failure').'&InvId='.$this->orderId.'" >
                     <input type="hidden" name="orderNumber" value="'.$this->orderId.'">
                     <input type="hidden" name="sum" value="'.$this->orderTotal.'" data-type="number" >
                     <input type="hidden" name="customerNumber" value="'.$this->userId.'" >
                     <input type="hidden" name="cms_name" value="shopcms" >
                 ';
-                if ($this->_getSettingValue("CONF_PAYMENTMODULE_YM_CHECK") && !empty($receipt)) {
-                    $html .= '<textarea name="ym_merchant_receipt" style="display:none;">'.$receipt->getJson().'</textarea>';
-                }
-                $html .= '</form>';
+            if ($this->_getSettingValue("CONF_PAYMENTMODULE_YM_CHECK") && !empty($receipt)) {
+                $html .= '<textarea name="ym_merchant_receipt" style="display:none;">'.$receipt->getJson().'</textarea>';
+            }
+            $html .= '</form>';
         } elseif ($this->mode === self::MODE_MONEY) {
             $html = '<form method="POST" action="'.$this->getFormUrl().'"  id="paymentform" name = "paymentform" accept-charset="utf-8">
                        <input type="hidden" name="receiver" value="'.$this->account.'">
@@ -553,12 +682,13 @@ class CYandexMoney extends PaymentModule
                        <input type="hidden" name="need-email" value="'.$this->need_email.'" >
                        <input type="hidden" name="need-phone" value="'.$this->need_phone.'">
                        <input type="hidden" name="need-address" value="'.$this->need_address.'">
-                        <input type="hidden" name="SuccessURL" value="' . getTransactionResultURL('success') . '&InvId=' . $this->orderId  . '" >
+                        <input type="hidden" name="SuccessURL" value="'.getTransactionResultURL('success').'&InvId='.$this->orderId.'" >
                         </form>';
         } elseif ($this->mode === self::MODE_BILLING) {
             $html = '<form method="POST" action="'.$this->getFormUrl().'"  id="paymentform" name = "paymentform" accept-charset="utf-8">
                        <input type="hidden" name="formId" value="'.$this->billing_id.'" />
-                       <input type="hidden" name="narrative" value="Order '.htmlspecialchars($this->parsePlaceholders($this->billing_purpose, $orderDb)).'" />
+                       <input type="hidden" name="narrative" value="Order '.htmlspecialchars($this->parsePlaceholders($this->billing_purpose,
+                    $orderDb)).'" />
                        <input type="hidden" name="sum" value="'.$this->orderTotal.'" data-type="number" />
                        <input type="hidden" name="fio" value="'.htmlspecialchars($_SESSION['ym_billing_fio']).'" />
                        <input type="hidden" name="quickPayVersion" value="2" />
@@ -569,17 +699,20 @@ class CYandexMoney extends PaymentModule
         $html .= '<script type="text/javascript">
                     document.getElementById("paymentform").submit();
                     </script>';
-        echo $html; exit;
+        echo $html;
+        exit;
+
         return $html;
     }
 
     public function checkSign($callbackParams)
     {
         $string = $callbackParams['action'].';'.$callbackParams['orderSumAmount'].';'
-            .$callbackParams['orderSumCurrencyPaycash'].';'.$callbackParams['orderSumBankPaycash'].';'
-            .$callbackParams['shopId'].';'.$callbackParams['invoiceId'].';'.$callbackParams['customerNumber']
-            .';'.$this->password;
-        $md5 = strtoupper(md5($string));
+                  .$callbackParams['orderSumCurrencyPaycash'].';'.$callbackParams['orderSumBankPaycash'].';'
+                  .$callbackParams['shopId'].';'.$callbackParams['invoiceId'].';'.$callbackParams['customerNumber']
+                  .';'.$this->password;
+        $md5    = strtoupper(md5($string));
+
         return (strtoupper($callbackParams['md5']) == $md5);
     }
 
@@ -588,21 +721,23 @@ class CYandexMoney extends PaymentModule
         header("Content-type: text/xml; charset=utf-8");
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
             <'.$callbackParams['action'].'Response performedDatetime="'.date("c").'" code="'.$code
-            .'" invoiceId="'.$callbackParams['invoiceId'].'" shopId="'.$this->shopid.'"/>';
+               .'" invoiceId="'.$callbackParams['invoiceId'].'" shopId="'.$this->shopid.'"/>';
         echo $xml;
     }
 
     public function individualCheck($callbackParams)
     {
         $string = $callbackParams['notification_type'].'&'.$callbackParams['operation_id'].'&'
-            .$callbackParams['amount'].'&'.$callbackParams['currency'].'&'.$callbackParams['datetime'] .'&'
-            .$callbackParams['sender'].'&'.$callbackParams['codepro'].'&'.$this->money_password.'&'
-            .$callbackParams['label'];
-        $check = (sha1($string) == $callbackParams['sha1_hash']);
+                  .$callbackParams['amount'].'&'.$callbackParams['currency'].'&'.$callbackParams['datetime'].'&'
+                  .$callbackParams['sender'].'&'.$callbackParams['codepro'].'&'.$this->money_password.'&'
+                  .$callbackParams['label'];
+        $check  = (sha1($string) == $callbackParams['sha1_hash']);
         if (!$check) {
             header('HTTP/1.0 401 Unauthorized');
+
             return false;
         }
+
         return true;
     }
 
@@ -613,8 +748,11 @@ class CYandexMoney extends PaymentModule
         if ($this->mode === self::MODE_KASSA) {
             if ($this->checkSign($callbackParams)) {
                 $order = ordGetOrder($callbackParams["orderNumber"]);
-                if (number_format($callbackParams['orderSumAmount'], 2) == number_format(floatval($order["order_amount"] * $order["currency_value"]), 2)) {
+                if (number_format($callbackParams['orderSumAmount'],
+                        2) == number_format(floatval($order["order_amount"] * $order["currency_value"]), 2)
+                ) {
                     $this->sendCode($callbackParams, 0);
+
                     return (int)$callbackParams["orderNumber"];
                 } else {
                     $this->sendCode($callbackParams, 100);
@@ -627,6 +765,7 @@ class CYandexMoney extends PaymentModule
                 return (int)$callbackParams["label"];
             }
         }
+
         return false;
     }
 
@@ -681,16 +820,18 @@ class CYandexMoney extends PaymentModule
         );
         foreach ($order as $key => $value) {
             if (is_scalar($value)) {
-                $replace['%' . $value . '%'] = $value;
+                $replace['%'.$value.'%'] = $value;
             }
         }
+
         return strtr($tpl, $replace);
     }
 }
 
 
 if (!interface_exists('JsonSerializable', false)) {
-    interface JsonSerializable {
+    interface JsonSerializable
+    {
         function jsonSerialize();
     }
 }
@@ -731,52 +872,82 @@ class YandexMoneyReceipt implements JsonSerializable
     public function __construct($taxRateId = self::DEFAULT_TAX_RATE_ID, $currency = self::DEFAULT_CURRENCY)
     {
         $this->taxRateId = $taxRateId;
-        $this->items = array();
-        $this->currency = $currency;
+        $this->items     = array();
+        $this->currency  = $currency;
     }
 
     /**
      * Добавляет в чек товар
+     *
      * @param string $title Название товара
      * @param float $price Цена товара
      * @param float $quantity Количество покупаемого товара
      * @param int|null $taxId Идентификатор ставки НДС для товара или null
+     *
+     * @param string $paymentMethodType
+     * @param string $paymentSubjectType
+     *
      * @return YandexMoneyReceipt
      */
-    public function addItem($title, $price, $quantity = 1.0, $taxId = null)
-    {
-        $this->items[] = new YandexMoneyReceiptItem($title, $quantity, $price, false, $taxId);
+    public function addItem(
+        $title,
+        $price,
+        $quantity = 1.0,
+        $taxId = null,
+        $paymentMethodType = '',
+        $paymentSubjectType = ''
+    ) {
+        $this->items[] = new YandexMoneyReceiptItem($title, $quantity, $price, false, $taxId, $paymentMethodType,
+            $paymentSubjectType);
+
         return $this;
     }
 
     /**
      * Добавляет в чек доставку
+     *
      * @param string $title Название способа доставки
      * @param float $price Цена доставки
      * @param int|null $taxId Идентификатор ставки НДС для доставки или null
+     *
+     * @param string $paymentMethodType
+     * @param string $paymentSubjectType
+     *
      * @return YandexMoneyReceipt
      */
-    public function addShipping($title, $price, $taxId = null)
-    {
-        $this->shipping = new YandexMoneyReceiptItem($title, 1.0, $price, true, $taxId);
-        $this->items[] = $this->shipping;
+    public function addShipping(
+        $title,
+        $price,
+        $taxId = null,
+        $paymentMethodType = '',
+        $paymentSubjectType = ''
+    ) {
+        $this->shipping = new YandexMoneyReceiptItem($title, 1.0, $price, true, $taxId, $paymentMethodType,
+            $paymentSubjectType);
+        $this->items[]  = $this->shipping;
+
         return $this;
     }
 
     /**
      * Устанавливает адрес доставки чека - или имейл или номер телефона
+     *
      * @param string $value Номер телефона или имэйл получателя
+     *
      * @return YandexMoneyReceipt
      */
     public function setCustomerContact($value)
     {
         $this->customerContact = $value;
+
         return $this;
     }
 
     /**
      * Возвращает стоимость заказа исходя из состава чека
+     *
      * @param bool $withShipping Добавить ли к стоимости заказа стоимость доставки
+     *
      * @return float Общая стоимость заказа
      */
     public function getAmount($withShipping = true)
@@ -787,6 +958,7 @@ class YandexMoneyReceipt implements JsonSerializable
                 $result += $item->getAmount();
             }
         }
+
         return $result;
     }
 
@@ -801,18 +973,21 @@ class YandexMoneyReceipt implements JsonSerializable
         foreach ($this->items as $item) {
             if ($item->getPrice() >= 0.0) {
                 $items[] = array(
-                    'quantity' => (string)$item->getQuantity(),
-                    'price' => array(
-                        'amount' => number_format($item->getPrice(), 2, '.', ''),
+                    'quantity'           => (string)$item->getQuantity(),
+                    'price'              => array(
+                        'amount'   => number_format($item->getPrice(), 2, '.', ''),
                         'currency' => $this->currency,
                     ),
-                    'tax' => $item->hasTaxId() ? $item->getTaxId() : $this->taxRateId,
-                    'text' => $this->escapeString($item->getTitle()),
+                    'tax'                => $item->hasTaxId() ? $item->getTaxId() : $this->taxRateId,
+                    'text'               => $this->escapeString($item->getTitle()),
+                    'paymentMethodType'  => $item->getPaymentMethodType(),
+                    'paymentSubjectType' => $item->getPaymentSubjectType(),
                 );
             }
         }
+
         return array(
-            'items' => $items,
+            'items'           => $items,
             'customerContact' => $this->escapeString($this->customerContact),
         );
     }
@@ -836,13 +1011,15 @@ class YandexMoneyReceipt implements JsonSerializable
 
     public function legacyReplaceUnicodeMatches($matches)
     {
-        return html_entity_decode('&#x' . $matches[1] . ';', ENT_COMPAT, 'UTF-8');
+        return html_entity_decode('&#x'.$matches[1].';', ENT_COMPAT, 'UTF-8');
     }
 
     /**
      * Подгоняет стоимость товаров в чеке к общей цене заказа
+     *
      * @param float $orderAmount Общая стоимость заказа
      * @param bool $withShipping Поменять ли заодно и цену доставки
+     *
      * @return YandexMoneyReceipt
      */
     public function normalize($orderAmount, $withShipping = false)
@@ -855,8 +1032,8 @@ class YandexMoneyReceipt implements JsonSerializable
         $realAmount = $this->getAmount($withShipping);
         if ($realAmount != $orderAmount) {
             $coefficient = $orderAmount / $realAmount;
-            $realAmount = 0.0;
-            $aloneId = null;
+            $realAmount  = 0.0;
+            $aloneId     = null;
             foreach ($this->items as $index => $item) {
                 if ($withShipping || !$item->isShipping()) {
                     $item->applyDiscountCoefficient($coefficient);
@@ -880,18 +1057,22 @@ class YandexMoneyReceipt implements JsonSerializable
                 }
             }
         }
+
         return $this;
     }
 
     /**
      * Деэскейпирует строку для вставки в JSON
+     *
      * @param string $string Исходная строка
+     *
      * @return string Строка с эскейпированными "<" и ">"
      */
     private function escapeString($string)
     {
         // JSON отправляем в utf-8
         $string = iconv('windows-1251', 'utf-8', $string);
+
         return str_replace(array('<', '>'), array('&lt;', '&gt;'), html_entity_decode($string));
     }
 }
@@ -915,22 +1096,36 @@ class YandexMoneyReceiptItem
 
     /** @var int|null Идентификатор ставки НДС для конкретного товара */
     private $taxId;
+    private $paymentMethodType;
+    private $paymentSubjectType;
 
     /**
      * YandexMoneyReceiptItem constructor.
+     *
      * @param string $title
      * @param float $quantity
      * @param float $price
      * @param bool $isShipping
      * @param int|null $taxId
+     * @param $paymentMethodType
+     * @param $paymentSubjectType
      */
-    public function __construct($title, $quantity, $price, $isShipping, $taxId)
-    {
-        $this->title = mb_substr($title, 0, 60, 'windows-1251');
-        $this->quantity = (float)$quantity;
-        $this->price = round($price, 2);
-        $this->shipping = $isShipping;
-        $this->taxId = $taxId;
+    public function __construct(
+        $title,
+        $quantity,
+        $price,
+        $isShipping,
+        $taxId,
+        $paymentMethodType,
+        $paymentSubjectType
+    ) {
+        $this->title              = mb_substr($title, 0, 60, 'windows-1251');
+        $this->quantity           = (float)$quantity;
+        $this->price              = round($price, 2);
+        $this->shipping           = $isShipping;
+        $this->taxId              = $taxId;
+        $this->paymentMethodType  = $paymentMethodType;
+        $this->paymentSubjectType = $paymentSubjectType;
     }
 
     /**
@@ -989,6 +1184,7 @@ class YandexMoneyReceiptItem
 
     /**
      * Привеняет для товара скидку
+     *
      * @param float $value Множитель скидки
      */
     public function applyDiscountCoefficient($value)
@@ -998,6 +1194,7 @@ class YandexMoneyReceiptItem
 
     /**
      * Увеличивает цену товара на указанную величину
+     *
      * @param float $value Сумма на которую цену товара увеличиваем
      */
     public function increasePrice($value)
@@ -1007,7 +1204,9 @@ class YandexMoneyReceiptItem
 
     /**
      * Уменьшает количество покупаемого товара на указанное, возвращает объект позиции в чеке с уменьшаемым количеством
+     *
      * @param float $count Количество на которое уменьшаем позицию в чеке
+     *
      * @return YandexMoneyReceiptItem Новый инстанс позиции в чеке
      */
     public function fetchItem($count)
@@ -1015,8 +1214,9 @@ class YandexMoneyReceiptItem
         if ($count > $this->quantity) {
             throw new BadMethodCallException();
         }
-        $result = new YandexMoneyReceiptItem($this->title, $count, $this->price, false, $this->taxId);
+        $result         = new YandexMoneyReceiptItem($this->title, $count, $this->price, false, $this->taxId);
         $this->quantity -= $count;
+
         return $result;
     }
 
@@ -1027,5 +1227,21 @@ class YandexMoneyReceiptItem
     public function isShipping()
     {
         return $this->shipping;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentMethodType()
+    {
+        return $this->paymentMethodType;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaymentSubjectType()
+    {
+        return $this->paymentSubjectType;
     }
 }
