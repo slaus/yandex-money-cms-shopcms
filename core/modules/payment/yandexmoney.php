@@ -10,7 +10,7 @@
 
 class CYandexMoney extends PaymentModule
 {
-    const YAVERSION = '1.2.2';
+    const YAVERSION = '1.2.3';
 
     const MODE_NONE = 0;
     const MODE_KASSA = 1;
@@ -81,27 +81,27 @@ class CYandexMoney extends PaymentModule
     public $delivery_payment_subject;
 
     private $array_payments = array(
-        'ym'    => array('PC', 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅ'),
-        'cards' => array('AC', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ'),
-        'cash'  => array('GP', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'),
-        'phone' => array('MC', 'пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'),
+        'ym'    => array('PC', 'Яндекс.Деньги'),
+        'cards' => array('AC', 'Банковские карты'),
+        'cash'  => array('GP', 'Наличные через терминалы'),
+        'phone' => array('MC', 'Счёта мобильного телефона'),
         'wm'    => array('WM', 'WebMoney'),
-        'ab'    => array('AB', 'пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅ'),
-        'sb'    => array('SB', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ'),
+        'ab'    => array('AB', 'Альфа-Клик'),
+        'sb'    => array('SB', 'Сбербанк Онлайн'),
         'ma'    => array('MA', 'MasterPass'),
-        'pb'    => array('PB', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'),
+        'pb'    => array('PB', 'Промсвязьбанк'),
         'qw'    => array('QW', 'QIWI Wallet'),
-        'cr'    => array('CR', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ'),
+        'cr'    => array('CR', 'Заплатить по частям'),
     );
 
     public function _initVars()
     {
         $this->title       = "YandexMoney";
         $this->description = "YandexMoney (money.yandex.ru).
-             <br/> пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+             <br/> Модуль работает в режиме автоматической оплаты. Этот модуль можно использовать для автоматической продажи цифровых товаров.
              <br/>
-             пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ <a href=\"https://money.yandex.ru/doc.xml?id=527132\">https://money.yandex.ru/doc.xml?id=527132</a> (пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ). пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
-             <br/>пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ".self::YAVERSION;
+             Любое использование Вами программы означает полное и безоговорочное принятие Вами условий лицензионного договора, размещенного по адресу <a href=\"https://money.yandex.ru/doc.xml?id=527132\">https://money.yandex.ru/doc.xml?id=527132</a> (далее – «Лицензионный договор»). Если Вы не принимаете условия Лицензионного договора в полном объёме, Вы не имеете права использовать программу в каких-либо целях.
+             <br/>Модуль версии ".self::YAVERSION;
         $this->sort_order  = 0;
 
         $array_params = array(
@@ -227,7 +227,7 @@ class CYandexMoney extends PaymentModule
 
     public function getMethodsHtml()
     {
-        $html = "<br/><b>пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:</b><br/><select name=\"ym_method\">";
+        $html = "<br/><b>Способ оплаты:</b><br/><select name=\"ym_method\">";
         if ($this->mode === self::MODE_KASSA) {
             foreach ($this->array_payments as $key => $value) {
                 if ($this->_getSettingValue('CONF_PAYMENTMODULE_YM_METHOD_'.strtoupper($key))) {
@@ -264,10 +264,10 @@ class CYandexMoney extends PaymentModule
             }
         }
 
-        $html = '<br /><label for="ym-billing-fio">пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</label><br />'
+        $html = '<br /><label for="ym-billing-fio">ФИО плательщика</label><br />'
                 .'<input type="text" name="ym_billing_fio" id="ym-billing-fio" value="'.htmlspecialchars(implode(' ',
                 $fio)).'" />'
-                .'<div id="ym-billing-fio-error" style="display: none;">пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</div>'
+                .'<div id="ym-billing-fio-error" style="display: none;">Укажите фамилию имя и отчество плательщика</div>'
                 .'<br /><br />'
                 .'<script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -325,15 +325,15 @@ class CYandexMoney extends PaymentModule
     {
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_DESC'] = array(
             'settings_value'         => '1',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.',
+            'settings_title'         => 'Выберите только одну систему приема платежей:',
+            'settings_description'   => 'например, если вы выберете Кассу, настройки Яндекс.Денег и Яндекс.Платежки заполнять не нужно.',
             'settings_html_function' => '',
             'sort_order'             => 1,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_KASSA_ENABLE'] = array(
             'settings_value'         => '0',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Яндекс.Касса',
             'settings_description'   => '',
             'settings_html_function' => 'setting_CHECK_BOX(',
             'sort_order'             => 2,
@@ -341,39 +341,39 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_URLS'] = array(
             'settings_value'         => '1',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (AvisoURL/checkURL)',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ<br />https://пїЅпїЅпїЅ_пїЅпїЅпїЅпїЅпїЅ/index.php?yandexmoney=yes',
+            'settings_title'         => 'Адрес приема уведомлений (AvisoURL/checkURL)',
+            'settings_description'   => 'Подставьте в ссылку адрес вашего сайта, затем скопируйте ее в настройки на стороне Яндекс.Кассы<br />https://ваш_домен/index.php?yandexmoney=yes',
             'settings_html_function' => '',
             'sort_order'             => 3,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_TESTMODE'] = array(
             'settings_value'         => '1',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Тестовый режим',
+            'settings_description'   => 'Используйте тестовый режим для проверки модуля',
             'settings_html_function' => 'setting_CHECK_BOX(',
             'sort_order'             => 4,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_SHOPID'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (ShopID)',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ',
+            'settings_title'         => 'Идентификатор вашего магазина в Яндекс.Деньгах (ShopID)',
+            'settings_description'   => 'Только для юридических лиц',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 5,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_SCID'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (scid)',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ',
+            'settings_title'         => 'Идентификатор витрины вашего магазина в Яндекс.Деньгах (scid)',
+            'settings_description'   => 'Только для юридических лиц',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 6,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_PASSWORD'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (shopPassword) пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Секретное слово (shopPassword) для обмена сообщениями',
             'settings_description'   => '',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 7,
@@ -381,16 +381,16 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_STATUS'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Статус заказа после оплаты',
+            'settings_description'   => 'Рекомендуем поставить тот же статус, который в вашем магазине означает оплаченный заказ',
             'settings_html_function' => 'setting_ORDER_STATUS_SELECT(',
             'sort_order'             => 8,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_PAYMENT_TYPE_DESC'] = array(
             'settings_value'         => '1',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Способы оплаты ',
+            'settings_description'   => 'Укажите способы оплаты, которые отмечены в договоре с Кассой',
             'settings_html_function' => '',
             'sort_order'             => 9,
         );
@@ -407,23 +407,23 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_CHECK'] = array(
             'settings_value'         => '0',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ 54-пїЅпїЅ',
+            'settings_title'         => 'Отправлять в Яндекс.Кассу данные для чеков',
+            'settings_description'   => 'Настройка для тех, кто подключил решение Яндекс.Кассы для 54-ФЗ',
             'settings_html_function' => 'setting_CHECK_BOX(',
             'sort_order'             => 11,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_TAXES'] = array(
             'settings_value'         => '1',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Ставка НДС по умолчанию',
+            'settings_description'   => 'Эта ставка будет передаваться в Яндекс.Кассу, если в карточке товара не указана другая ставка. НДС нужен для формирования чека',
             'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::get_def_taxes(),',
             'sort_order'             => 12,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_PAYMENT_METHOD'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Признак способа расчета',
             'settings_description'   => '',
             'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentModeEnum(),',
             'sort_order'             => 13,
@@ -431,7 +431,7 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_PAYMENT_SUBJECT'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Признак предмета расчета',
             'settings_description'   => '',
             'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentSubjectEnum(),',
             'sort_order'             => 14,
@@ -439,7 +439,7 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_DELIVERY_PAYMENT_METHOD'] = array(
             'settings_value'         => '1',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Признак способа рачета для доставки',
             'settings_description'   => '',
             'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentModeEnum(),',
             'sort_order'             => 15,
@@ -447,7 +447,7 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_DELIVERY_PAYMENT_SUBJECT'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Признак предмета расчета для доставки',
             'settings_description'   => '',
             'settings_html_function' => 'setting_SELECT_BOX(CYandexMoney::getPaymentSubjectEnum(),',
             'sort_order'             => 16,
@@ -463,7 +463,7 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_MONEY_ENABLE'] = array(
             'settings_value'         => '0',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Яндекс.Деньги',
             'settings_description'   => '',
             'settings_html_function' => 'setting_CHECK_BOX(',
             'sort_order'             => 20,
@@ -471,24 +471,24 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_ACCOUNT'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Номер кошелька Яндекс.Денег',
+            'settings_description'   => 'В этот кошелек будут поступать деньги',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 21,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_MONEY_PASSWORD'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ <a href="https://sp-money.yandex.ru/myservices/new.xml" target="blank">пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ</a>',
+            'settings_title'         => 'Секретное слово',
+            'settings_description'   => 'Его нужно получить на <a href="https://sp-money.yandex.ru/myservices/new.xml" target="blank">сайте Яндекс.Денег</a>',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 22,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_MONEY_STATUS'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Статус заказа после оплаты',
+            'settings_description'   => 'Рекомендуем поставить тот же статус, который в вашем магазине означает оплаченный заказ',
             'settings_html_function' => 'setting_ORDER_STATUS_SELECT(',
             'sort_order'             => 23,
         );
@@ -503,7 +503,7 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_BILLING_ENABLE'] = array(
             'settings_value'         => '0',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Яндекс.Платежка',
             'settings_description'   => '',
             'settings_html_function' => 'setting_CHECK_BOX(',
             'sort_order'             => 30,
@@ -511,24 +511,24 @@ class CYandexMoney extends PaymentModule
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_BILLING_ID'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'ID пїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'ID формы',
             'settings_description'   => '',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 31,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_BILLING_PURPOSE'] = array(
-            'settings_value'         => 'пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ %order_id% пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+            'settings_value'         => 'Номер заказа %order_id% Оплата через Яндекс.Платежку',
+            'settings_title'         => 'Назначение платежа',
+            'settings_description'   => 'Назначение будет в платежном поручении: напишите в нем всё, что поможет отличить заказ, который оплатили через Платежку',
             'settings_html_function' => 'setting_TEXT_BOX(0,',
             'sort_order'             => 32,
         );
 
         $this->SettingsFields['CONF_PAYMENTMODULE_YM_BILLING_STATUS'] = array(
             'settings_value'         => '',
-            'settings_title'         => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ',
-            'settings_description'   => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ',
+            'settings_title'         => 'Статус заказа',
+            'settings_description'   => 'Статус должен показать, что результат платежа неизвестен: заплатил клиент или нет, вы можете узнать только из уведомления на электронной почте или в своем банке',
             'settings_html_function' => 'setting_ORDER_STATUS_SELECT(',
             'sort_order'             => 33,
         );
@@ -538,15 +538,15 @@ class CYandexMoney extends PaymentModule
     {
         return array(
             array(
-                'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅ',
+                'title' => 'Яндекс.Касса',
                 'value' => '1',
             ),
             array(
-                'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅ',
+                'title' => 'Яндекс.Деньги',
                 'value' => '2',
             ),
             array(
-                'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ',
+                'title' => 'Яндекс.Платежка',
                 'value' => '3',
             ),
         );
@@ -555,47 +555,47 @@ class CYandexMoney extends PaymentModule
     public function get_def_taxes()
     {
         return array(
-            array('value' => '1', 'title' => 'пїЅпїЅпїЅ пїЅпїЅпїЅ'),
+            array('value' => '1', 'title' => 'Без НДС'),
             array('value' => '2', 'title' => '0%'),
             array('value' => '3', 'title' => '10%'),
             array('value' => '4', 'title' => '18%'),
-            array('value' => '5', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 11/110'),
-            array('value' => '6', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 18/118'),
+            array('value' => '5', 'title' => 'Рассчётная ставка 11/110'),
+            array('value' => '6', 'title' => 'Рассчётная ставка 18/118'),
         );
     }
 
     public function getPaymentModeEnum()
     {
         return array(
-            array('value' => 'full_prepayment', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (full_prepayment)'),
-            array('value' => 'partial_prepayment', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (partial_prepayment)'),
-            array('value' => 'advance', 'title' => 'пїЅпїЅпїЅпїЅпїЅ (advance)'),
-            array('value' => 'full_payment', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (full_payment)'),
-            array('value' => 'partial_payment', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (partial_payment)'),
-            array('value' => 'credit', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ (credit)'),
-            array('value' => 'credit_payment', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (credit_payment)'),
+            array('value' => 'full_prepayment', 'title' => 'Полная предоплата (full_prepayment)'),
+            array('value' => 'partial_prepayment', 'title' => 'Частичная предоплата (partial_prepayment)'),
+            array('value' => 'advance', 'title' => 'Аванс (advance)'),
+            array('value' => 'full_payment', 'title' => 'Полный расчет (full_payment)'),
+            array('value' => 'partial_payment', 'title' => 'Частичный расчет и кредит (partial_payment)'),
+            array('value' => 'credit', 'title' => 'Кредит (credit)'),
+            array('value' => 'credit_payment', 'title' => 'Выплата по кредиту (credit_payment)'),
         );
     }
 
     public function getPaymentSubjectEnum()
     {
         return array(
-            array('value' => 'commodity', 'title' => 'пїЅпїЅпїЅпїЅпїЅ (commodity)'),
-            array('value' => 'excise', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (excise)'),
-            array('value' => 'job', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ (job)'),
-            array('value' => 'service', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ (service)'),
-            array('value' => 'gambling_bet', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (gambling_bet)'),
-            array('value' => 'gambling_prize', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (gambling_prize)'),
-            array('value' => 'lottery', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (lottery)'),
-            array('value' => 'lottery_prize', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (lottery_prize)'),
+            array('value' => 'commodity', 'title' => 'Товар (commodity)'),
+            array('value' => 'excise', 'title' => 'Подакцизный товар (excise)'),
+            array('value' => 'job', 'title' => 'Работа (job)'),
+            array('value' => 'service', 'title' => 'Услуга (service)'),
+            array('value' => 'gambling_bet', 'title' => 'Ставка в азартной игре (gambling_bet)'),
+            array('value' => 'gambling_prize', 'title' => 'Выигрыш в азартной игре (gambling_prize)'),
+            array('value' => 'lottery', 'title' => 'Лотерейный билет (lottery)'),
+            array('value' => 'lottery_prize', 'title' => 'Выигрыш в лотерею (lottery_prize)'),
             array(
                 'value' => 'intellectual_activity',
-                'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (intellectual_activity)',
+                'title' => 'Результаты интеллектуальной деятельности (intellectual_activity)',
             ),
-            array('value' => 'payment', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ (payment)'),
-            array('value' => 'agent_commission', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (agent_commission)'),
-            array('value' => 'composite', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (composite)'),
-            array('value' => 'another', 'title' => 'пїЅпїЅпїЅпїЅпїЅпїЅ (another)'),
+            array('value' => 'payment', 'title' => 'Платеж (payment)'),
+            array('value' => 'agent_commission', 'title' => 'Агентское вознаграждение (agent_commission)'),
+            array('value' => 'composite', 'title' => 'Несколько вариантов (composite)'),
+            array('value' => 'another', 'title' => 'Другое (another)'),
         );
     }
 
@@ -675,7 +675,7 @@ class CYandexMoney extends PaymentModule
                        <input type="hidden" name="label" value="'.$this->orderId.'">
                        <input type="hidden" name="quickpay-form" value="'.$this->quickpay_form.'">
                        <input type="hidden" name="paymentType" value="'.$this->pay_method.'">
-                       <input type="hidden" name="targets" value="пїЅпїЅпїЅпїЅпїЅ '.$this->orderId.'">
+                       <input type="hidden" name="targets" value="Заказ '.$this->orderId.'">
                        <input type="hidden" name="sum" value="'.$this->orderTotal.'" data-type="number" >
                        <input type="hidden" name="comment" value="'.$this->comment.'" >
                        <input type="hidden" name="need-fio" value="'.$this->need_fio.'">
@@ -741,7 +741,7 @@ class CYandexMoney extends PaymentModule
         return true;
     }
 
-    /* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ */
+    /* оплачивает заказ */
     public function ProcessResult()
     {
         $callbackParams = $_POST;
@@ -837,32 +837,32 @@ if (!interface_exists('JsonSerializable', false)) {
 }
 
 /**
- * пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+ * Класс чека
  */
 class YandexMoneyReceipt implements JsonSerializable
 {
-    /** @var string пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅ */
+    /** @var string Код валюты - рубли */
     const CURRENCY_RUB = 'RUB';
 
-    /** @var string пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var string Используемая по умолчанию валюта */
     const DEFAULT_CURRENCY = self::CURRENCY_RUB;
 
-    /** @var int пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var int Идентификатор ставки НДС по умолчанию */
     const DEFAULT_TAX_RATE_ID = 1;
 
-    /** @var YandexMoneyReceiptItem[] пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var YandexMoneyReceiptItem[] Массив с информацией о покупаемых товарах */
     private $items;
 
-    /** @var string пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var string Контакт покупателя, куда будет отправлен чек - либо имэйл, либо номер телефона */
     private $customerContact;
 
-    /** @var int пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var int Идентификатор ставки НДС по умолчанию */
     private $taxRateId;
 
-    /** @var string пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ */
+    /** @var string Валюта в которой производится платёж */
     private $currency;
 
-    /** @var YandexMoneyReceiptItem|null пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var YandexMoneyReceiptItem|null Айтем в котором хранится информация о доставке как о товаре */
     private $shipping;
 
     /**
@@ -877,12 +877,12 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+     * Добавляет в чек товар
      *
-     * @param string $title пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @param float $price пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @param float $quantity пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @param int|null $taxId пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ null
+     * @param string $title Название товара
+     * @param float $price Цена товара
+     * @param float $quantity Количество покупаемого товара
+     * @param int|null $taxId Идентификатор ставки НДС для товара или null
      *
      * @param string $paymentMethodType
      * @param string $paymentSubjectType
@@ -904,11 +904,11 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Добавляет в чек доставку
      *
-     * @param string $title пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-     * @param float $price пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-     * @param int|null $taxId пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ null
+     * @param string $title Название способа доставки
+     * @param float $price Цена доставки
+     * @param int|null $taxId Идентификатор ставки НДС для доставки или null
      *
      * @param string $paymentMethodType
      * @param string $paymentSubjectType
@@ -930,9 +930,9 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Устанавливает адрес доставки чека - или имейл или номер телефона
      *
-     * @param string $value пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @param string $value Номер телефона или имэйл получателя
      *
      * @return YandexMoneyReceipt
      */
@@ -944,11 +944,11 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+     * Возвращает стоимость заказа исходя из состава чека
      *
-     * @param bool $withShipping пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @param bool $withShipping Добавить ли к стоимости заказа стоимость доставки
      *
-     * @return float пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * @return float Общая стоимость заказа
      */
     public function getAmount($withShipping = true)
     {
@@ -963,8 +963,8 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ JSON пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return array пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ JSON пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Преобразует чек в массив для дальнейшей его отправки в JSON формате
+     * @return array Ассоциативный массив с чеком, готовый для отправки в JSON формате
      */
     public function jsonSerialize()
     {
@@ -993,8 +993,8 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ JSON пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return string пїЅпїЅпїЅ пїЅ JSON пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Сериализует чек в JSON формат
+     * @return string Чек в JSON формате
      */
     public function getJson()
     {
@@ -1002,9 +1002,9 @@ class YandexMoneyReceipt implements JsonSerializable
             return json_encode($this->jsonSerialize(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         } else {
             $json = json_encode($this->jsonSerialize());
-            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ PHP пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ json_encode
-            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-            // пїЅпїЅпїЅпїЅ \u1234 пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ utf-8
+            // для версий PHP которые не поддерживают передачу параметров в json_encode
+            // заменяем в полученной при сериализации строке уникод последовательности
+            // вида \u1234 на их реальное значение в utf-8
             return preg_replace_callback('/\\\\u(\w{4})/', array($this, 'legacyReplaceUnicodeMatches'), $json);
         }
     }
@@ -1015,10 +1015,10 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * Подгоняет стоимость товаров в чеке к общей цене заказа
      *
-     * @param float $orderAmount пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @param bool $withShipping пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @param float $orderAmount Общая стоимость заказа
+     * @param bool $withShipping Поменять ли заодно и цену доставки
      *
      * @return YandexMoneyReceipt
      */
@@ -1062,15 +1062,15 @@ class YandexMoneyReceipt implements JsonSerializable
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ JSON
+     * Деэскейпирует строку для вставки в JSON
      *
-     * @param string $string пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * @param string $string Исходная строка
      *
-     * @return string пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "<" пїЅ ">"
+     * @return string Строка с эскейпированными "<" и ">"
      */
     private function escapeString($string)
     {
-        // JSON пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ utf-8
+        // JSON отправляем в utf-8
         $string = iconv('windows-1251', 'utf-8', $string);
 
         return str_replace(array('<', '>'), array('&lt;', '&gt;'), html_entity_decode($string));
@@ -1078,23 +1078,23 @@ class YandexMoneyReceipt implements JsonSerializable
 }
 
 /**
- * пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
+ * Класс товара в чеке
  */
 class YandexMoneyReceiptItem
 {
-    /** @var string пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var string Название товара */
     private $title;
 
-    /** @var float пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var float Количество покупаемого товара */
     private $quantity;
 
-    /** @var float пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var float Цена товара */
     private $price;
 
-    /** @var bool пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var bool Является ли наименование доставкой товара */
     private $shipping;
 
-    /** @var int|null пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+    /** @var int|null Идентификатор ставки НДС для конкретного товара */
     private $taxId;
     private $paymentMethodType;
     private $paymentSubjectType;
@@ -1129,8 +1129,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return float пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * Возвращает цену товара
+     * @return float Цена товара
      */
     public function getPrice()
     {
@@ -1138,8 +1138,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
-     * @return float пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * Возвращает общую стоимость позиции в чеке
+     * @return float Стоимость покупаемого товара
      */
     public function getAmount()
     {
@@ -1147,8 +1147,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return string пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * Возвращает название товара
+     * @return string Название товара
      */
     public function getTitle()
     {
@@ -1156,8 +1156,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return float пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * Возвращает количество покупаемого товара
+     * @return float Количество товара
      */
     public function getQuantity()
     {
@@ -1165,8 +1165,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
-     * @return bool True пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, false пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+     * Проверяет, установлена ли для товара ставка НДС
+     * @return bool True если ставка НДС для товара установлена, false если нет
      */
     public function hasTaxId()
     {
@@ -1174,8 +1174,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return int|null пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ null пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Возвращает ставку НДС товара
+     * @return int|null Идентификатор ставки НДС или null если он не был установлен
      */
     public function getTaxId()
     {
@@ -1183,9 +1183,9 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * Привеняет для товара скидку
      *
-     * @param float $value пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     * @param float $value Множитель скидки
      */
     public function applyDiscountCoefficient($value)
     {
@@ -1193,9 +1193,9 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Увеличивает цену товара на указанную величину
      *
-     * @param float $value пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @param float $value Сумма на которую цену товара увеличиваем
      */
     public function increasePrice($value)
     {
@@ -1203,11 +1203,11 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * Уменьшает количество покупаемого товара на указанное, возвращает объект позиции в чеке с уменьшаемым количеством
      *
-     * @param float $count пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
+     * @param float $count Количество на которое уменьшаем позицию в чеке
      *
-     * @return YandexMoneyReceiptItem пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
+     * @return YandexMoneyReceiptItem Новый инстанс позиции в чеке
      */
     public function fetchItem($count)
     {
@@ -1221,8 +1221,8 @@ class YandexMoneyReceiptItem
     }
 
     /**
-     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
-     * @return bool True пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, false пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+     * Проверяет является ли текущая позиция доставкой товара
+     * @return bool True если доставка товара, false если нет
      */
     public function isShipping()
     {
